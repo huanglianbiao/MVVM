@@ -46,8 +46,8 @@ class Compile {
         Array.from(childNodes).forEach(node => {
             // 判断元素节点
             if (this.isElementNode(node)) {
-                this.compileElment(node);
-                // console.log("elment", node);
+                this.compileElement(node);
+                // console.log("element", node);
                 this.compile(node);
             } else {
                 // 文本节点
@@ -58,12 +58,12 @@ class Compile {
 
     }
 
-    compileElment(node) {
+    compileElement(node) {
         // 取出节点属性
         let attrs = node.attributes;
         // console.log(attrs);
         Array.from(attrs).forEach(attr => {
-            // 带{{}}
+            // 带v-的指令
             if (this.isDirective(attr.name)) {
                 let expr = attr.value;  // 表达式
                 // v-text取出text
@@ -100,7 +100,12 @@ CompileUtil = {
     text(node, vm, expr) {
         let updaterFn = this.updater["textUpdater"];
 
+        /*
+        * 解析模板，并给该节点添加一个update的观察者
+        * */
+
         expr.replace(/\{\{([^}]+)\}\}/g, (...arguments) => {
+            // 添加观察者
             new Watcher(vm, arguments[1], (newVal) => {
                 updaterFn && updaterFn(node, this.getTxtVal(vm, expr));
             })

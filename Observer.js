@@ -10,7 +10,7 @@ class Observer {
             return;
         }
 
-        // 
+        //
         Object.keys(data).forEach(key => {
             // 劫持
             this.defineReactive(data, key, data[key]);
